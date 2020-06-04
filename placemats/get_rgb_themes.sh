@@ -1,0 +1,1 @@
+curl 'http://colormind.io/api/' --data-binary '{"model":"default"}'
