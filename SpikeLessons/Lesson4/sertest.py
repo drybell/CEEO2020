@@ -6,7 +6,7 @@ import requests
 # outputs the weather from city_id in celsius to the Spike Prime 
 # by serial connection 
 
-key = "b6fb6cd636d2c3f44a1f7949ff4febf7"
+key = "INSERT KEY HERE"
 
 # Replace the city id with your city's id
 #Find the entire list of id here http://bulk.openweathermap.org/sample/
@@ -21,6 +21,7 @@ url = baseurl + "data/2.5/weather?id=" + city_id + "&appid=" + key
 
 ret = requests.get(url).json()
 
+# pull out the data from json 
 temp_in_kelvin = ret['main']['temp'] # the temperature in kelvin
 temp_in_celsius = temp_in_kelvin - 273
 city_name = ret['name']
@@ -30,7 +31,7 @@ print(city_name)
 
 # print(ret)
 
-# MIGHT BE A DIFFERENT CONNECTION HERE
+# MIGHT BE A DIFFERENT CONNECTION HERE, 
 ser = serial.Serial("/dev/tty.usbmodem14131", baudrate=115200)
 
 ser.write(b'\x03') # Ctrl-C 
