@@ -49,25 +49,29 @@ client = Client(configuration={"base_url": base_url, "access_key": key, "secret_
 headers = {'Accept': 'application/vnd.onshape.v1+json', 'Content-Type': 'application/json'}
 
 # IF A QUERY REQUIRES AN FID OR A PID, DON'T FORGET TO ASK THE USER TO SUPPLY ONE 
-# IF OPTIONAL, PREPEND optional- to the front of the string 
+# IF OPTIONAL, PREPEND opt- to the front of the string 
+# IF BOOLEAN, PREPEND b- to the front of the string 
+# IF NUMBER, PREPEND n- to the front of the string 
+# If OBJECT, PREPEND O- to the front of the string
 # CAN'T DO MICROVERSIONS AND VERSIONS YET.......
 # GET CALLS DON'T HAVE REQUEST BODIES 
-with_eid = {'feature-studio-contents': ['GET', '/api/featurestudios/d/did/w/wid/e/eid'],
-            'feature-studio-specs': ['GET', '/api/featurestudios/d/did/w/wid/e/eid/featurespecs'],
-            'part-studio-translation': ['POST','/api/partstudios/d/did/w/wid/e/eid/translations', 'configuration', 'formatName', 'includeExportIds', 'linkDocumentWorkspaceId', 'partIds', 'storeInDocument'],
-            'add-feature-part-studio': ['POST','/api/partstudios/d/did/w/wid/e/eid/features'],
-            'part-studio-body-details': ['GET','/api/partstudios/d/did/w/wid/e/eid/bodydetails'],
-            'part-studio-delete-feature': ['DELETE','/api/partstudios/d/did/w/wid/e/eid/features/featureid/fid'],
-            'part-studio-update-feature': ['POST','/api/partstudios/d/did/w/wid/e/eid/features/featureid/fid'],
-            'parts-body-details': ['GET','/api/parts/d/did/w/wid/e/eid/partid/pid/bodydetails'],
+# EXPORT PART STUDIO AS STL 
+with_eid = {'feature-studio-contents': [['GET', '/api/featurestudios/d/did/w/wid/e/eid'], []],
+            'feature-studio-specs': [['GET', '/api/featurestudios/d/did/w/wid/e/eid/featurespecs'],[]],
+            'part-studio-translation': [['POST','/api/partstudios/d/did/w/wid/e/eid/translations', 'configuration', 'formatName', 'includeExportIds', 'linkDocumentWorkspaceId', 'partIds', 'storeInDocument'],[]],
+            'part-studio-add-feature': [['POST','/api/partstudios/d/did/w/wid/e/eid/features', 'O-feature', 'b-opt-rejectMicroversionSkew', 'serializationVersion', 'sourceMicroversion'],[]],
+            'part-studio-body-details': [['GET','/api/partstudios/d/did/w/wid/e/eid/bodydetails', 'opt-configuration', 'opt-linkDocumentId', 'opt-rollbackBarIndex'],['opt-configuration', 'opt-linkDocumentId', 'n-opt-rollbackBarIndex']],
+            'part-studio-delete-feature': [['DELETE','/api/partstudios/d/did/w/wid/e/eid/features/featureid/fid'],[]],
+            'part-studio-update-feature': [['POST','/api/partstudios/d/did/w/wid/e/eid/features/featureid/fid', 'O-feature', 'O-feature.message', 'feature.type', 'feature.typeName', 'b-opt-rejectMicroversionSkew', 'serializationVersion', 'sourceMicroversion'], []],
+            'parts-body-details': [['GET','/api/parts/d/did/w/wid/e/eid/partid/pid/bodydetails'], ['opt-configuration', 'opt-linkDocumentId']],
 }
 
 without_eid = {'create-feature-studio': ['POST', '/api/featurestudios/d/did/w/wid','name'],
                'create-part-studio': ['POST','/api/partstudios/d/did/w/wid','name'],
-               'create-document': ['POST','/api/documents','isPublic',],
-               'copy-workspace': ['POST','/api/documents/did/workspaces/wid/copy'],
-               'create-version': ['POST','/api/documents/d/did/versions'],
-               'create-workspace': ['POST','/api/documents/d/did/workspaces'],
+               'create-document': ['POST','/api/documents','b-isPublic','name','opt-ownerld','n-ownerType'],
+               'copy-workspace': ['POST','/api/documents/did/workspaces/wid/copy','b-opt-isPublic','newName','opt-ownerld','opt-ownerTypeIndex'],
+               'create-version': ['POST','/api/documents/d/did/versions','opt-description','documentId','b-opt-fromHistory','opt-microversionId','name','opt-workspaceId'],
+               'create-workspace': ['POST','/api/documents/d/did/workspaces','opt-description','opt-microversionId','name','opt-versionId','opt-workspaceId'],
 }
 
 # Will change to a class later 

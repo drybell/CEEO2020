@@ -1,6 +1,7 @@
 import requests
 import argparse 
 from onshape_client.client import Client
+import json 
 
 ## Needed to do pip3 install urllib3==1.25.9
 
@@ -51,16 +52,22 @@ client = Client(configuration={"base_url": base_url, "access_key": key, "secret_
 # url for get metadata
 # tester = '/api/metadata/d/2696c6465ac59aff8ca3dfc1/w/be80594917e5b1877e38d94e/e/bd2b08bfd9046a3e25896bf3?depth=5&detailLevel=5&noNull=false&thumbnail=false&p-offset=0'
 
+
+
+# Get Feature List: /assemblies/d/:did/w/wid/e/eid/features
+
 # Create a new part studio given document and element id 
 studio_name = "DOWN"
 headers = {'Accept': 'application/vnd.onshape.v1+json', 'Content-Type': 'application/json'}
-body = {"name": studio_name}
+# body = {"name": studio_name}
 # query = {"did": document_id, "wid": wid}
 # r2 = client.api_client.call_api()
 # r1 = client.api_client.request('GET', base_url + tester, headers=headers)
 # print(r1)
 # print(headers)
-r = client.api_client.request('POST', url= base_url + '/api/partstudios/d/' + document_id + '/w/' + wid, query_params={}, headers=headers, body=body, _preload_content=False)
-# print(r.body())
+r = client.api_client.request('GET', url= base_url + '/api/assemblies/d/2696c6465ac59aff8ca3dfc1/w/be80594917e5b1877e38d94e/e/813c2254236b056011fdcba1/features', query_params={}, headers=headers, _preload_content=False)
+# print(r.data)
+x = json.loads(r.data)
+print(x)
 
 
