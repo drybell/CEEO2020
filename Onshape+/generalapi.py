@@ -49,9 +49,12 @@ client = Client(configuration={"base_url": base_url, "access_key": key, "secret_
 headers = {'Accept': 'application/vnd.onshape.v1+json', 'Content-Type': 'application/json'}
 
 # IF A QUERY REQUIRES AN FID OR A PID, DON'T FORGET TO ASK THE USER TO SUPPLY ONE 
+# IF OPTIONAL, PREPEND optional- to the front of the string 
+# CAN'T DO MICROVERSIONS AND VERSIONS YET.......
+# GET CALLS DON'T HAVE REQUEST BODIES 
 with_eid = {'feature-studio-contents': ['GET', '/api/featurestudios/d/did/w/wid/e/eid'],
             'feature-studio-specs': ['GET', '/api/featurestudios/d/did/w/wid/e/eid/featurespecs'],
-            'part-studio-translation': ['POST','/api/partstudios/d/did/w/wid/e/eid/translations'],
+            'part-studio-translation': ['POST','/api/partstudios/d/did/w/wid/e/eid/translations', 'configuration', 'formatName', 'includeExportIds', 'linkDocumentWorkspaceId', 'partIds', 'storeInDocument'],
             'add-feature-part-studio': ['POST','/api/partstudios/d/did/w/wid/e/eid/features'],
             'part-studio-body-details': ['GET','/api/partstudios/d/did/w/wid/e/eid/bodydetails'],
             'part-studio-delete-feature': ['DELETE','/api/partstudios/d/did/w/wid/e/eid/features/featureid/fid'],
@@ -59,9 +62,9 @@ with_eid = {'feature-studio-contents': ['GET', '/api/featurestudios/d/did/w/wid/
             'parts-body-details': ['GET','/api/parts/d/did/w/wid/e/eid/partid/pid/bodydetails'],
 }
 
-without_eid = {'create-feature-studio': ['POST', '/api/featurestudios/d/did/w/wid'],
-               'create-part-studio': ['POST','/api/partstudios/d/did/w/wid'],
-               'create-document': ['POST','/api/documents'],
+without_eid = {'create-feature-studio': ['POST', '/api/featurestudios/d/did/w/wid','name'],
+               'create-part-studio': ['POST','/api/partstudios/d/did/w/wid','name'],
+               'create-document': ['POST','/api/documents','isPublic',],
                'copy-workspace': ['POST','/api/documents/did/workspaces/wid/copy'],
                'create-version': ['POST','/api/documents/d/did/versions'],
                'create-workspace': ['POST','/api/documents/d/did/workspaces'],
