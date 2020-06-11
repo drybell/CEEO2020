@@ -104,14 +104,66 @@ if flags == "ALL":
         print("%s: A %s call to %s" % (key, with_eid[key][0], with_eid[key][1]))
     print()
     query = setQuery(with_eid)
-    payload_ids = []
+    payload = {}
     body_list = with_eid[query][0]
+    string_flags = ['opt-', 'b-', 'n-', 'O-']
     # url_params = with_eid[query][1][1]
-    if len(body_list) == 2: 
-        # dont do the for loop since there's no extra request body parameters
-    for i in range(2, len(body_list))
-        user = input("Please specify %s: " % (body_list[i]))
-        payload_ids.append(user)
+    if len(body_list) > 2:
+        for i in range(2, len(body_list)):
+            curr = body_list[i]
+            # TODO: IF HYPHENS EXIST IN THE BEGINNING OF THE WORD, REMOVE THEM SO USER ISN'T CONFUSED
+            opt = True 
+            user = ""
+            print("Current request body parameter: %s" % (curr))
+            if 'opt-' in curr:
+                user = input("This is an optional parameter, type in \'y\' or \'n\' if you want to use it: ")
+                if user == "n":
+                    opt = False 
+            if 'b-' in curr and opt:
+                # IF USER MESSES UP, WE DON'T WANT THE PROGRAM TO END, BUT FOR THEM TO TRY AGAIN 
+                check = False
+                while not check: 
+                    user = input("This query is of type Boolean. Please type in \'true\' or \'false\': ")
+                    if user == 'true' or user == 'false':
+                        check = True
+                    else: 
+                        # user didn't type in true or false 
+                        print('You have not entered \'true\' or \'false\'. Try again.')
+            if 'n-' in curr and opt : 
+                # usually is 0 or 1, could be different, but whatever. 
+                check = False
+                while not check: 
+                    user = input("This query is of type Number. Please type in \'0\' or \'1\': ")
+                    if user == '0' or '1':
+                        check = True
+                    else: 
+                        # user didn't type in type Number (0 or 1) 
+                        print('You have not entered \'0\' or \'1\'. Try again.')
+            if 'O-' in curr and opt:   
+                # need to read in some kind of .json file; will start off with having the user input .json file   
+                # BROKEN, BUT IF A FEATURE IS NEEDED WE NEED TO TAKE IN SOMETHING THAT LOOKS LIKE A FEATURE JSON 
+                # CHECK first lines of 1inchcube.json for guidance 
+                check = False 
+                content = []
+                while not check: 
+                    user = input("Please specify a relative file path (from the directory this script was run) to your .json file: ")
+                    try 
+                        with open(user, "r") as f: 
+                            content = f.readlines()   
+                        check = True
+                    except Exception e: 
+                        print("File not found, try again")
+                user = parse_
+            if not any([sub in curr for sub in string_flags]):
+                user = input("Please specify %s: " % (curr))
+
+            payload.update(curr: user)
+
+
+
+    else:
+        # print only if we don't have a complete query
+        print("ERROR: This is not a valid request")
 
 elif flags == "NO_EID":
     print("Using queries with no_eid specified...")
