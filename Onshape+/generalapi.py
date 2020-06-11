@@ -104,6 +104,14 @@ if flags == "ALL":
         print("%s: A %s call to %s" % (key, with_eid[key][0], with_eid[key][1]))
     print()
     query = setQuery(with_eid)
+    payload_ids = []
+    body_list = with_eid[query][0]
+    # url_params = with_eid[query][1][1]
+    if len(body_list) == 2: 
+        # dont do the for loop since there's no extra request body parameters
+    for i in range(2, len(body_list))
+        user = input("Please specify %s: " % (body_list[i]))
+        payload_ids.append(user)
 
 elif flags == "NO_EID":
     print("Using queries with no_eid specified...")
