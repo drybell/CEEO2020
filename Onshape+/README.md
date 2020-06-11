@@ -14,3 +14,9 @@ Need Help?
 
 ## What is the did, wid, and eid? 
 (Will add images and explanations later)
+
+## Update: June 11th
+We are currently working on VSCode support for syntax-highlighting of FeatureScript code (.fs files)! If you are interested, look within the featurescript folder. 
+
+### Data Pipeline for FeatureScripts High Level Overview:
+We are trying to start off with a local FeatureScript, then calling a script that can output the .stl file for running the respective FeatureScript

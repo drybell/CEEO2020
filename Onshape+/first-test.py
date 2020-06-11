@@ -65,9 +65,21 @@ headers = {'Accept': 'application/vnd.onshape.v1+json', 'Content-Type': 'applica
 # r1 = client.api_client.request('GET', base_url + tester, headers=headers)
 # print(r1)
 # print(headers)
-r = client.api_client.request('GET', url= base_url + '/api/assemblies/d/2696c6465ac59aff8ca3dfc1/w/be80594917e5b1877e38d94e/e/813c2254236b056011fdcba1/features', query_params={}, headers=headers, _preload_content=False)
+# For lots of legos 
+# r = client.api_client.request('GET', url= base_url + '/api/assemblies/d/2696c6465ac59aff8ca3dfc1/w/be80594917e5b1877e38d94e/e/813c2254236b056011fdcba1/features', query_params={}, headers=headers, _preload_content=False)
 # print(r.data)
+# BOTTOM WAS FOR ASSEMBLIES, WE WANT PART STUDIOS (I AM DUMB) 
+# r = client.api_client.request('GET', url = base_url + '/api/assemblies/d/2696c6465ac59aff8ca3dfc1/w/be80594917e5b1877e38d94e/e/814b5482eccf4b7c56711ef5/features', query_params={}, headers=headers) 
+# r = client.api_client.request('GET', url = base_url + '/api/partstudios/d/2696c6465ac59aff8ca3dfc1/w/be80594917e5b1877e38d94e/e/bd2b08bfd9046a3e25896bf3/features', query_params={}, headers=headers)
+r = client.api_client.request('GET', url = base_url + '/api/partstudios/d/2696c6465ac59aff8ca3dfc1/w/be80594917e5b1877e38d94e/e/8b59dcfebfc34d65d9a48a0b/features', query_params={}, headers=headers)
+# GET FEATURE STUDIO CONTENTS 
+# TAKE THE CONTENTS KEY AND PARSE THE DATA TO LOOK LIKE A FEATURESCRIPT DOCUMENT
+r = client.api_client.request('GET', url = base_url + '/api/featurestudios/d/2696c6465ac59aff8ca3dfc1/w/be80594917e5b1877e38d94e/e/bc9a854eac21bb0267389766', query_params={}, headers=headers)
+# GET A SIMPLE CUBE 
+r = client.api_client.request('GET', url = base_url + '/api/partstudios/d/2696c6465ac59aff8ca3dfc1/w/be80594917e5b1877e38d94e/e/7f9ae9c3e88be636159e769a/features', query_params={}, headers=headers)
 x = json.loads(r.data)
-print(x)
+print(json.dumps(x, indent=4))
+
+
 
 

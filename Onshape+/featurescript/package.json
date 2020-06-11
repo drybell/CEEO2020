@@ -1,0 +1,25 @@
+{
+    "name": "featurescript",
+    "displayName": "FeatureScript",
+    "description": "Syntax Highlighting for FeatureScript (Onshape)",
+    "version": "0.0.1",
+    "engines": {
+        "vscode": "^1.46.0"
+    },
+    "categories": [
+        "Programming Languages"
+    ],
+    "contributes": {
+        "languages": [{
+            "id": "featurescript",
+            "aliases": ["FeatureScript", "featurescript"],
+            "extensions": [".fs"],
+            "configuration": "./language-configuration.json"
+        }],
+        "grammars": [{
+            "language": "featurescript",
+            "scopeName": "source.fs",
+            "path": "./syntaxes/featurescript.tmLanguage.json"
+        }]
+    }
+}
