@@ -1,0 +1,8 @@
+{
+    "contents": "FeatureScript 1301;\nimport(path : \"onshape/std/geometry.fs\", version : \"1301.0\");\n\nannotation { \"Feature Type Name\" : \"My Feature\" }\nexport const myFeature = defineFeature(function(context is Context, id is Id, definition is map)\n    precondition\n    {\n        // Define the parameters of the feature type\n    }\n    {\n        // Define the function's action\n        fCuboid(context, id + \"cuboid1\", {\n                \"corner1\" : vector(0, 0, 0) * inch,\n                \"corner2\" : vector(1, 1, 1) * inch\n        });\n    });\n",
+    "serializationVersion": "1.1.18",
+    "sourceMicroversion": "beceed3353c98cef1f2cc1b3",
+    "rejectMicroversionSkew": false,
+    "microversionSkew": false,
+    "libraryVersion": 0
+}
