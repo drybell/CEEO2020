@@ -25,7 +25,7 @@ update_string = "/api/featurestudios/d/aec16876714d70a447e5b140/w/c96b1b15861efb
 post_api_call = base_url + update_string
 get_api_call = base_url + get_string
 
-image = Image.open('square-small.jpg') 
+image = Image.open('square-medium.jpg') 
 f = image.load() 
 
 color = 15
@@ -43,6 +43,7 @@ test_array = []
 # the image, if something's black make it a point. Lowers the resolution
 
 # or a lookback? 
+
 scanner_box = 4 # set the window to be 2 x 2 px 
 
 for x in range(image.size[0]):
@@ -57,6 +58,54 @@ for x in range(image.size[0]):
 
 print("Max x: %d" % (image.size[0]))
 print("Max y: %d" % (image.size[1]))
+
+
+# For higher resolution images, let's try to just grab the outer pixels of the 
+# shaded region and work from there 
+
+# To do that, we iterate from all 4 sides of the image and attempt to reach the 
+# center of the image. 
+# If we reach a pixel, we take its position and move on
+# Purge duplicate positions after 
+def gatherOuterPoints(plot):
+	max_x = len(plot)
+	max_y = len(plot[0])
+	outer_pixels = []
+
+	# Top down = for each x array, iterate through y arrays + and find first 1 
+	for x in range(max_x):
+		for y in range(max_y): 
+			if plot[x][y] == "1":
+				outer_pixels.append([x,y])
+				break
+
+	# Left right = for each position in y, iterate through the same position of x
+	for y in range(max_y): 
+		for x in range(max_x):
+			if plot[x][y] == "1":
+				outer_pixels.append([x,y])
+				break
+
+	# Down up = At the ends of each y, count down until you reach a 1 
+	# for x in range(max_x):
+	# 	for y in range(max_y - 1, -1, -1):
+	# 		if plot[x][y] == "1":
+	# 			outer_pixels.append([x,y])
+	# 			break
+
+	#Right left = At the ends of x, count backwards through x 
+	for y in range(max_y -1, -1, -1):
+		for x in range(max_x - 1, -1, -1): 
+			if plot[x][y] == "1":
+				outer_pixels.append([x,y])
+				break
+
+	purged = []
+	for item in outer_pixels:
+		if item not in purged: 
+			purged.append(item)
+
+	return purged
 
 def outOfBounds(x,y,max_x,max_y):
 	return x < 0 or x >= max_x or y < 0 or y >= max_y
@@ -115,7 +164,8 @@ def reducePoints(plot):
 						reduced.append([i,j])
 	return reduced
 
-reduced = reducePoints(test_array)
+# reduced = reducePoints(test_array)
+outer_pixels = gatherOuterPoints(test_array)
 
 filtered = []
 new_reduced = []
@@ -137,9 +187,15 @@ new_reduced = []
 
 
 
-x = [sub[0]/scale for sub in reduced]
-y = [sub[1]/scale for sub in reduced]
+x = [sub[0]/scale for sub in outer_pixels]
+y = [sub[1]/scale for sub in outer_pixels]
+
+x_start = [sub[0]/scale for sub in pixels]
+y_start = [sub[1]/scale for sub in pixels]
+
 plt.scatter(x,y)
+plt.show()
+plt.scatter(x_start,y_start)
 plt.show()
 exit()
 formatter_x = []

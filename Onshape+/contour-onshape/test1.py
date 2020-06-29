@@ -23,6 +23,9 @@ _, binary = cv2.threshold(gray, thresh, thresh, cv2.THRESH_BINARY_INV)
 
 # find the contours from the thresholded image
 contours, hierarchy = cv2.findContours(binary, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
+data = np.vstack(contours).squeeze()
+np.savetxt("test-square.txt", data)
+# exit()
 mask = np.ones(image.shape[:2], dtype="uint8") * 255 # white mask
 
 # Draw the contours on the mask
