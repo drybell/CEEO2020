@@ -18,11 +18,11 @@ Once you have get-pip.py downloaded, there are a couple options you can try to h
 ## After install: 
 Once you have waited the average 15 minutes to install pip3 on your EV3, there could be a warning that looks like this: 
 
-``
+```
 WARNING: The script chardetect is installed in '/home/robot/.local/bin' which is not on PATH.
   Consider adding this directory to PATH or, if you prefer to suppress this warning, use --no-warn-script-location.
     Running setup.py install for ruamel.yaml.clib ... done
-``
+```
 
 If you're not going to use pip3 a lot and want pip3 to be installed there (with the rest of it's packages), just add `/home/robot/.local/bin` to your path with the command: 
 
@@ -55,9 +55,10 @@ Let's finish up by `cd /usr/local/lib/python3.5/site-packages` and `touch pip.in
 
 Within `nano` or `vim`, open up `pip.ini` and type in: 
 
-``[global]
+```
+[global]
 target=/usr/local/lib/python3.5/site-packages
-``
+```
 
 This will reroute pip3 installs to the python3 site-packages folder. 
 
@@ -69,17 +70,19 @@ Simply `cd` and type in `pip3 install onshape-client`
 
 ## Setting up your .yaml file with configuration
 
-Create a file in your home directory called `.onshape_client_config.yaml` 
+Create a file in your home directory called `.onshape_client_config.yaml`, this is used within the onshape_client library to authenticate api calls. 
 
 Here is the boilerplate code: 
-``
+```
 prod_api_keys:
   base_url: "https://cad.onshape.com"
   secret_key: YOUR SECRET KEY
   access_key: YOUR ACCESS KEY
 default_stack: prod_api_keys
-``
+```
 
 Fill in your API secret key and access key here, change the base url to an enterprise one if you have an enterprise account.
+
+After that, you're all set. I have some test code inside `Onshape+/scripts` that can guide you to using Onshape's extensive API Suite
 
 ## Congratulations! 
