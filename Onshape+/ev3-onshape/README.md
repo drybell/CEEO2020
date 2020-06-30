@@ -45,7 +45,7 @@ If site-packages exists, let's check if the executables for pip exist in `~/.loc
 
 ![bin](./images/bin.png)
 
-Check to see where pip3 resides by typing in `which pip3`. If `/usr/bin/pip3` pops up, you're in good shape. If not, let's quickly switch over to the root user with `sudo su` and copy over the executable `pip3` with the command `cp ~/.local/bin/pip3 /usr/bin/`. 
+Check to see where pip3 resides by typing in `which pip3`. If `/usr/bin/pip3` pops up, you're in good shape. If not, let's quickly switch over to the root user with `sudo su` and copy over the executable `pip3` with the command `cp home/robot/.local/bin/pip3 /usr/bin/`. 
 
 While in root, we will also copy over the directory `site-packages` with the command `cp -r ~/.local/lib/site-packages /usr/local/lib/python3.5/` 
 
