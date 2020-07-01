@@ -1,0 +1,12 @@
+@font-face {
+    font-family: 'Landasans Ultra';
+    src: url('Landasans-UltraLight.eot');
+    src: url('Landasans-UltraLight.eot?#iefix') format('embedded-opentype'),
+        url('Landasans-UltraLight.woff2') format('woff2'),
+        url('Landasans-UltraLight.woff') format('woff'),
+        url('Landasans-UltraLight.ttf') format('truetype'),
+        url('Landasans-UltraLight.svg#Landasans-UltraLight') format('svg');
+    font-weight: 200;
+    font-style: normal;
+}
+
