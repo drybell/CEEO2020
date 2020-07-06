@@ -25,10 +25,11 @@ client = Client(configuration={"base_url": base_url, "access_key": key, "secret_
 
 did = "aec16876714d70a447e5b140"
 wid = "c96b1b15861efbe1cf7dd9be"
-eid = "db62cec33be087b52f777ec3"
+# eid = "db62cec33be087b52f777ec3"
+eid = "92e70961b3ada9cd69667064"
 
-get_string = "/api/featurestudios/d/aec16876714d70a447e5b140/w/c96b1b15861efbe1cf7dd9be/e/db62cec33be087b52f777ec3"
-update_string = "/api/featurestudios/d/aec16876714d70a447e5b140/w/c96b1b15861efbe1cf7dd9be/e/db62cec33be087b52f777ec3"
+get_string = "/api/featurestudios/d/aec16876714d70a447e5b140/w/c96b1b15861efbe1cf7dd9be/e/92e70961b3ada9cd69667064"
+update_string = "/api/featurestudios/d/aec16876714d70a447e5b140/w/c96b1b15861efbe1cf7dd9be/e/92e70961b3ada9cd69667064"
 post_api_call = base_url + update_string
 get_api_call = base_url + get_string
 
@@ -294,7 +295,7 @@ def buildPlot(points, x_length, y_length):
 # test = complexTravel(test_array, test)
 # print(test)
 test = []
-with open("test-square3.txt", "r") as f:
+with open("test-test.txt", "r") as f:
 	lines = f.read().splitlines()
 	for line in lines: 
 		line = line.split(" ")
