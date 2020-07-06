@@ -4,7 +4,7 @@ import numpy as np
 
 thresh = 150
 # read the image
-img = cv2.imread("square.jpg")
+img = cv2.imread("testcomplex.jpg")
 scale_percent = 50 # percent of original size
 width = int(img.shape[1] * scale_percent / 100)
 height = int(img.shape[0] * scale_percent / 100)
@@ -22,9 +22,9 @@ _, binary = cv2.threshold(gray, thresh, thresh, cv2.THRESH_BINARY_INV)
 # plt.show()
 
 # find the contours from the thresholded image
-contours, hierarchy = cv2.findContours(binary, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
+contours, hierarchy = cv2.findContours(binary, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
 data = np.vstack(contours).squeeze()
-np.savetxt("test-square.txt", data)
+np.savetxt("test-square3.txt", data, fmt="%d")
 # exit()
 mask = np.ones(image.shape[:2], dtype="uint8") * 255 # white mask
 
@@ -43,8 +43,8 @@ contours = sorted(contours, key=cv2.contourArea, reverse=True)
 image = cv2.drawContours(image, contours, -1, (0, 0, 0), 2) # 2D array of 3x3 RGB values
 # res = cv2.bitwise_and(image, contours)
 canny = cv2.Canny(image, 100, 200)
-cv2.imwrite("square-medium.jpg", mask) 
-cv2.imwrite("square-medium-2.jpg", canny) # Need to look up what format canny returns 
+cv2.imwrite("complex-high.jpg", mask) 
+cv2.imwrite("complex-high-2.jpg", canny) # Need to look up what format canny returns 
 
 
 # Convert image data to a more readable 2D plot data. 

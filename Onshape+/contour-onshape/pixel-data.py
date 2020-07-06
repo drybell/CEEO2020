@@ -2,13 +2,20 @@ from PIL import Image
 import matplotlib.pyplot as plt
 from onshape_client.client import Client 
 import json
+from math import floor
+from random import randint
+import sys
+from sklearn.neighbors import NearestNeighbors
+import networkx as nx
+import numpy as np 
+sys.setrecursionlimit(100000)
 
 # first point should be last point, add first point to end of string
 
 key = ""
 secret = ""
 
-with open("../api-key", "r") as f: 
+with open("../scripts/api-key", "r") as f: 
 	key = f.readline().rstrip()
 	secret = f.readline().rstrip()
 
@@ -25,10 +32,10 @@ update_string = "/api/featurestudios/d/aec16876714d70a447e5b140/w/c96b1b15861efb
 post_api_call = base_url + update_string
 get_api_call = base_url + get_string
 
-image = Image.open('square-medium.jpg') 
+image = Image.open('complex-high.jpg') 
 f = image.load() 
 
-color = 15
+color = 5
 scale = 100 #.1 scale
 
 pixels = []
@@ -53,7 +60,8 @@ for x in range(image.size[0]):
 		if f[x,y] <= color:
 			pixels.append([x,y])
 			temp.append("1")
-		temp.append("0")
+		else:
+			temp.append("0")
 	test_array.append(temp)
 
 print("Max x: %d" % (image.size[0]))
@@ -87,11 +95,11 @@ def gatherOuterPoints(plot):
 				break
 
 	# Down up = At the ends of each y, count down until you reach a 1 
-	# for x in range(max_x):
-	# 	for y in range(max_y - 1, -1, -1):
-	# 		if plot[x][y] == "1":
-	# 			outer_pixels.append([x,y])
-	# 			break
+	for x in range(max_x):
+		for y in range(max_y - 1, -1, -1):
+			if plot[x][y] == "1":
+				outer_pixels.append([x,y])
+				break
 
 	#Right left = At the ends of x, count backwards through x 
 	for y in range(max_y -1, -1, -1):
@@ -106,6 +114,42 @@ def gatherOuterPoints(plot):
 			purged.append(item)
 
 	return purged
+
+# for each N x N region of the plot, average the internal 1 positions
+def averagebyN(N, plot): 
+	offset_x = N
+	offset_y = N 
+
+	max_x = len(plot)
+	max_y = len(plot[0])
+
+	# I don't think I'll care about the ends since N will generally be small
+	remainder_x = max_x % offset_x
+	remainder_y = max_y % offset_y
+
+	averaged_pixels = []
+
+	for x in range(0, max_x - remainder_x, offset_x):
+		for y in range(0, max_y - remainder_y, offset_y):
+			count = 0
+			one_positions = []
+			for i in range(offset_x):
+				for j in range(offset_y): 
+					if plot[x + i][y + j] == "1": 
+						count += 1
+						one_positions.append([x + i,y + j])
+			if count == 0: 
+				continue
+			sum_x = 0
+			sum_y = 0
+			for coords in one_positions:
+				sum_x += coords[0]
+				sum_y += coords[1]
+
+			new_coords = [floor(sum_x/count), floor(sum_y/count)]
+			averaged_pixels.append(new_coords)
+
+	return averaged_pixels
 
 def outOfBounds(x,y,max_x,max_y):
 	return x < 0 or x >= max_x or y < 0 or y >= max_y
@@ -164,45 +208,162 @@ def reducePoints(plot):
 						reduced.append([i,j])
 	return reduced
 
-# reduced = reducePoints(test_array)
-outer_pixels = gatherOuterPoints(test_array)
+def followOuterLine(start, curr, prev, plot, directions, gathered): 
+	# if curr == start and len(gathered) > 10:
+	# 	print(gathered)
+	# 	return gathered
+	if curr == start and len(gathered) > 500:
+		return gathered
+	else: 
+		# print("START: %s CURR: %s PREV: %s" % (start, curr, prev))
+		# print(gathered)
+		ns, totals = gatherNeighbors(directions, plot, curr)
+		all_totals = []
+		all_neighbors = []
+		for n in ns: 
+			new_ns, temp_totals = gatherNeighbors(directions, plot, ns[n])
+			all_totals.append(temp_totals)
+			all_neighbors.append(ns[n])
 
-filtered = []
-new_reduced = []
-# for item in reduced:
-# 	if item not in filtered: 
-# 		filtered.append(item)
+		# first attempt
+		least_neighbor = all_neighbors[all_totals.index(min(all_totals))]
+		ctr = 0
+		min_sorted_indices = [i[0] for i in sorted(enumerate(all_totals), key=lambda x:x[1])]
+		print("MIN SORTED: %s" % (min_sorted_indices))
+		print("ALL NEIGHBORS: %s" % (all_neighbors))
+		print("ALL TOTALS: %s" % (all_totals))
+		while least_neighbor in gathered:
+			least_neighbor = all_neighbors[min_sorted_indices[ctr]]	
+			total = all_totals[min_sorted_indices[ctr]]	
+			ctr += 1
+			if ctr == len(min_sorted_indices):
+				for i in range(len(min_sorted_indices), 0, -1):
+					if all_totals[min_sorted_indices[i]] < 8:
+						least_neighbor = all_neighbors[min_sorted_indices[i]]	
+		gathered.append(least_neighbor)
+		return followOuterLine(start,least_neighbor, curr, plot, directions, gathered)
 
-# for item in reduced: 
-# 	if item not in filtered: 
-# 		temp  = allInDirection("n", test_array, item)
-# 		temp2 = allInDirection("w", test_array, item)
-# 		temp3 = allInDirection("e", test_array, item)
-# 		temp4 = allInDirection("s", test_array, item)
-# 		totals = [temp,temp2,temp3,temp4]
-# 		for total in totals:
-# 			if total != [-1,-1]:
-# 				filtered.append(total)
-# 		new_reduced.append(item)
+def complexTravel(plot, outer_points):
+	reduced = []
+	directions = {"n": [0,-1], "ne": [1,-1], "nw": [-1,-1], "e": [1,0], "se": [1,1], "sw": [-1,1], "s": [0,1], "w": [-1,0]}
+	# begin by attempting to grab outer points 
+	outer_pixels = gatherOuterPoints(plot)
+	# grab a random point to start our traversal
+	totals = 5
+	rand_tries = []
+	ns = {}
+	start = []
+	test_index = 0
+	while totals >= 5: 
+		test_index = randint(0, len(outer_pixels) - 1)
+		if test_index not in rand_tries:
+			rand_tries.append(test_index)
+		start = outer_pixels[test_index]
+		ns, totals = gatherNeighbors(directions, plot, start)
+
+	# grabbed a good point coordinate called start
+	# grab its first neighbor
+	next_neighbor = ns[next(iter(ns))]
+	print("START %s" % (start))
+	return followOuterLine(start, next_neighbor, start, plot, directions, outer_points)
+
+def removeAll8Neighbors(plot):
+	directions = {"n": [0,-1], "ne": [1,-1], "nw": [-1,-1], "e": [1,0], "se": [1,1], "sw": [-1,1], "s": [0,1], "w": [-1,0]}
+	reduced = []
+	for x in range(len(plot)):
+		for y in range(len(plot[0])):
+			ns, totals = gatherNeighbors(directions, plot, [x,y])
+			if totals < 6 and plot[x][y] == "1": 
+				reduced.append([x,y])
+	return reduced
+
+def buildPlot(points, x_length, y_length):
+	refilled = []
+	for x in range(x_length):
+		temp = []
+		for y in range(y_length): 
+			temp.append("0")
+		refilled.append(temp)
+
+	for coords in points: 
+		refilled[coords[0]][coords[1]] = "1"
+
+	return refilled
+
+# test = []
+# test = complexTravel(test_array, test)
+# print(test)
+test = []
+with open("test-square3.txt", "r") as f:
+	lines = f.read().splitlines()
+	for line in lines: 
+		line = line.split(" ")
+		test.append([int(line[0]), int(line[1])])
+
+x = [sub[0]/scale for sub in test]
+y = [sub[1]/scale for sub in test]
+# plt.scatter(x, y)
+# plt.show()
+
+# outer_pixels2 = averagebyN(5, buildPlot(pixels, image.size[0], image.size[1]))
+# outer_pixels1 = averagebyN(30, buildPlot(outer_pixels2, image.size[0], image.size[1]))
+# outer_pixels = averagebyN(45, buildPlot(outer_pixels1, image.size[0], image.size[1]))
+
+# # x = np.array([sub[0] for sub in outer_pixels2])
+# # y = np.array([sub[1] for sub in outer_pixels2])
+# test_neighbors = np.c_[x,y]
+# clf = NearestNeighbors(2).fit(test_neighbors)
+# G = clf.kneighbors_graph()
+# T = nx.from_scipy_sparse_matrix(G)
+# paths = [list(nx.dfs_preorder_nodes(T, i)) for i in range(len(test_neighbors))]
+
+# mindist = np.inf
+# minidx = 0
+
+# for i in range(len(test_neighbors)):
+# 	p = paths[i]           # order of nodes
+# 	ordered = test_neighbors[p]    # ordered nodes
+# 	# find cost of that order by the sum of euclidean distances between points (i) and (i+1)
+# 	cost = (((ordered[:-1] - ordered[1:])**2).sum(1)).sum()
+# 	if cost < mindist:
+# 		mindist = cost
+# 		minidx = i
+
+# opt_order = paths[minidx]
+# plt.plot(x[opt_order], y[opt_order])
+# plt.show()
+# exit()
+
+# test = removeAll8Neighbors(test_array)
+# averaged_pixels2 = averagebyN(10, buildPlot(test, image.size[0], image.size[1]))
+# averaged_pixels1 = averagebyN(20, buildPlot(averaged_pixels2, image.size[0], image.size[1]))
+# averaged_pixels = averagebyN(30, buildPlot(averaged_pixels1, image.size[0], image.size[1]))
 
 
+# x0 = [sub[0]/scale for sub in test]
+# y0 = [sub[1]/scale for sub in test]
 
-x = [sub[0]/scale for sub in outer_pixels]
-y = [sub[1]/scale for sub in outer_pixels]
+# x = [sub[0]/scale for sub in averaged_pixels]
+# y = [sub[1]/scale for sub in averaged_pixels]
 
-x_start = [sub[0]/scale for sub in pixels]
-y_start = [sub[1]/scale for sub in pixels]
+# x_start = [sub[0]/scale for sub in outer_pixels]
+# y_start = [sub[1]/scale for sub in outer_pixels]
 
-plt.scatter(x,y)
-plt.show()
-plt.scatter(x_start,y_start)
-plt.show()
-exit()
+# fig, (ax1, ax2, ax3) = plt.subplots(1, 3)
+# ax1.scatter(x0,y0)
+# ax2.scatter(x,y)
+# ax3.scatter(x_start,y_start)
+# plt.show()
 formatter_x = []
 formatter_y = []
 for i, pixel in enumerate(x): 
 	formatter_x.append("%.6f" % (pixel))
 	formatter_y.append("%.6f" % (y[i])) 
+
+formatter_y = formatter_y[:-1]
+formatter_x = formatter_x[:-1]
+formatter_x.append("%.6f" % (x[0]))
+formatter_y.append("%.6f" % (y[0]))
 
 test_string = "vector( 2.000000,  1.000000) * mm"
 
