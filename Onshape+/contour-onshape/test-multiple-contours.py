@@ -3,8 +3,6 @@ import matplotlib.pyplot as plt
 from onshape_client.client import Client 
 import json
 import numpy as np 
-import argparse 
-import sys
 
 def imageToOnshape(api_path, image_path, feature_title, ids=["", "", ""], scale=100, thresh=100):
 
@@ -38,7 +36,7 @@ def imageToOnshape(api_path, image_path, feature_title, ids=["", "", ""], scale=
 	_, binary = cv2.threshold(gray, thresh, thresh, cv2.THRESH_BINARY_INV)
 
 	# GRAB EXTERNAL CONTOUR
-	contours, hierarchy = cv2.findContours(binary, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+	contours, hierarchy = cv2.findContours(binary, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
 	data = np.vstack(contours).squeeze()
 	# np.savetxt("test-test.txt", data, fmt="%d")
 
@@ -108,31 +106,3 @@ def imageToOnshape(api_path, image_path, feature_title, ids=["", "", ""], scale=
 
 	r = client.api_client.request("POST", url=post_api_call, query_params={}, headers=headers, body=body)
 	result2 = json.loads(r.data)
-
-parser = argparse.ArgumentParser(description='Image to Onshape: A simple way to get real-life sketches in a Sketch in Onshape')
-
-parser.add_argument('-d', '--ids', dest="ids", help="List of ids found from your Onshape Feature Studio in did,wid,eid format")
-parser.add_argument('-s', '--scale', dest="scale", help="An integer from 0-100 that specifies the percent scale to resize the original image. Default set to 100")
-parser.add_argument('-i', '--image',dest="image_path", help="An image path")
-parser.add_argument('-a', '--api-path', dest="api_path", help="Relative path to your api-key file")
-parser.add_argument('-T', '--title', dest="title", help="A title for your FeatureStudio Script")
-parser.add_argument('-t', '--thresh', dest="thresh", help="An integer from 0-255 that sets the threshold value when locating contours. Default set to 100")
-
-args = parser.parse_args()
-
-if len(sys.argv) == 1: 
-	print("\nimage-to-onshape.py is built to be used as a function in other \nscripts, but has command-line functionality as well.\n")
-	print("Please type in  python3 image-to-onshape.py -h  to learn more about command-line usage")
-	exit()
-elif (not (args.ids and args.image_path and args.api_path and args.title)):
-	print("-d, -i, -a, and -T are required flags for this script to work")
-else: 
-	if args.scale: 
-		imageToOnshape(args.api_path, args.image_path, args.title,ids=[str(item) for item in args.ids.split(',')], scale=int(args.scale))
-	elif args.thresh: 
-		imageToOnshape(args.api_path, args.image_path, args.title,ids=[str(item) for item in args.ids.split(',')], thresh=int(args.thresh))
-	elif args.scale and args.thresh:
-		imageToOnshape(args.api_path, args.image_path, args.title,ids=[str(item) for item in args.ids.split(',')], scale=int(args.scale), thresh=int(args.thresh))
-	else: 
-		imageToOnshape(args.api_path, args.image_path, args.title, ids=[str(item) for item in args.ids.split(',')])	 
-	print("Done.")
