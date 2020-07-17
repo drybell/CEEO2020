@@ -9,7 +9,7 @@ Try out https://cocalc.com/ or https://bellard.org/jslinux/. These online Unix e
 ## Table of Contents 
 
 1. [Cheat Sheet](#cheat-sheet)
-2. [Walkthrough of Essential Commands](#walkthrough-of-essential-commands)
+2. [Writing your first Shell Script](#your-first-shell-script)
 3. [Permissions](#permissions)
 4. [Compression](#compression)
 5. [Test Your Knowledge](#test-your-knowledge)
@@ -24,7 +24,7 @@ As I'm making this guide, I'm watching ASCII Star Wars in my Terminal by typing 
 
 ## Cheat Sheet  
 
-Below is a list of commands and respective flags that you should have in your toolbox. Use this cheat sheet when solving problems listed below. 
+Below is a list of commands and respective flags that you should have in your toolbox. Use this cheat sheet when solving problems listed [below](#your-first-shell-script). 
 
 - **`ls`**: list all files (within your current directory). You can also list files in a specified folder name with `ls path/to/your/folder/here/` 
     * **`-a`**: Display all files, even hidden ones (that start with a period --> .gitignore)
@@ -75,18 +75,19 @@ Below is a list of commands and respective flags that you should have in your to
     * **`--url`**: The url you want to send a cURL to. 
     * **`-s`**: silent mode.
     * **`-S`**: Show errors. 
-    Example: `curl -sS "https://en.wikipedia.org/wiki/List_of_Olympic_medalists_in_judo?action=raw"` allows you to view the list of olympic medalists in judo. 
+    Example: `curl -sS "https://en.wikipedia.org/wiki/List_of_Olympic_medalists_in_judo?action=raw"` allows you to view the list of olympic medalists in judo. Check the bottom of the cheat sheet to see the output of several cURL commands. 
 
-If you don't believe the powers of cURL, I've taken the freedom to try out some of the commands for you. Here's the output: 
+- **`touch`**: Create a file! Example: `touch this-is-so-cool.png` to create an empty .png file. You can even specify the path to create a file. 
+
+- **`nano` or `emacs` or `vim`**: Text editors in the Terminal! Each one has their own niche, so choose wisely. I personally love `vim`, so if you have any questions and want to learn more, feel free to AMA. Typing in `nano file.txt` or `emacs file.txt` or `vim file.txt` will open up the file in the respective text editor. If you don't have any of these, try `brew install` for OS X or `sudo apt-get install` if you're a Linux user. 
+
+If you don't believe in the powers of cURL, I've taken the freedom to try out some of the commands for you. Here's the output: 
 
 ![weather](./images/weather.png) ![moon](./images/moon.png) ![judo](./images/judo.png)
 
+## Your First Shell Script
 
-
-
-
-
-## Walkthrough of Essential Commands
+Let's write your first shell script together! Every `sh` script starts off with a [shebang](https://en.wikipedia.org/wiki/Shebang_(Unix)\) 
 
 
 ## Permissions
@@ -98,7 +99,21 @@ If you don't believe the powers of cURL, I've taken the freedom to try out some 
 
 ## Challenges
 
+1. Learn about `crontab` and `cron` [here](https://www.ostechnix.com/a-beginners-guide-to-cron-jobs/). Make a shell script that curls the weather in Abu Dhabi and outputs to a file named `weather-in-abu-dhabi` every 5 minutes. Try and append future output to the same file (and not overwriting the previous output). If you don't want this to run forever, you can use `crontab -e` in order to modify the list of running cronjobs. Deleting a line will allow you to remove the task from running ever again. 
+
+2. Make a shell script that organizes your Desktop! Figure out the necessary folders and the naming conventions that you want. For myself, I usually take a lot of screenshots and have them cluttered all over the Desktop. To fix this, I wrote a script and made it a cronjob to always move screen shots to a specified folder. 
+
+3. There's a command called `date` which prints out boring date and time. Write an upgraded `date` called `upgraded-date.sh` that allows you to see the time in multiple date-time formats, your current time zone, day of the week, etc. 
+
+4. Write a script to unzip files from a source folder and send the unzipped folder to a specified location. Example usage: `./my_unzipper Downloads/text.tar.gz CEEO2020/downloads`
+Allow multiple zip types for a more robust unzipper. 
+
 ## Extra Resources and Further Hacking
+
+I love finding new tools to `brew install`, and have compiled a list of fun scripts for you to try out on your own. 
+- `tree` allows you to visualize your current working directory and all of its subfolders in a nice ASCII art fashion. 
+- `weechat` allows you to join IRC channels. Chat away with other developers in your Terminal! Who needs slack or discord. 
+- 
 
 
 
