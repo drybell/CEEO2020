@@ -1,6 +1,6 @@
 # Welcome to the UNIX Tutorial/Workshop! 
 
-This README will help you navigate your way through Unix-like machines, and for people already familiar with working with Terminal/`sh`, a set of challenges to try out and work on new bash skills. If you think you're a pro, try out some [challenges](#challenges)
+This README will help you navigate your way through Unix-like machines, and for people already familiar with working with Terminal/`sh`, a set of challenges to try out and work on new bash skills. If you think you're a pro, try out some [challenges](#challenges) and skip my massive wall of text. 
 
 ## For PC users that want to try this out but don't want to dual-boot/get a VM/emulate: 
 
@@ -37,11 +37,13 @@ Below is a list of commands and respective flags that you should have in your to
 
 - **`cd`**: Change directory. Moves a hypothetical pointer of where your Terminal window is currently working in to a specified folder. **All commands that you execute require for you to be in the proper working directory and understand the file-structure.** This is probably the most used command other than `ls`. Examples: `cd ~` --> change to home directory. `cd ..` --> change to the parent directory. `cd /path/to/folder` --> change your working directory to the folder specified. Simply typing `cd` will change you back to the home directory.
 
-- **`pwd`**: Print working directory. If you don't know where you currently are, simply type in `pwd` and it will print something like `/Users/your_username_here/path/that/you/got/stuck/in/and/now/you/don't/know/where/you/are/`. You can then use `cd` to get
+- **`pwd`**: Print working directory. If you don't know where you currently are, simply type in `pwd` and it will print something like `/Users/your_username_here/path/that/you/got/stuck/in/and/now/you/don't/know/where/you/are/`. You can then use `cd` to get back to the home directory or chain `cd ../../../../..` to move back (in this case) 5 parent directories. The amount of `..` indicates the amount of parent directories you're jumping up. 
+
+**Pro Hacker Move:** If you have a couple hours, bored with your life, and are browsing insecure websites, real-life hacking awaits! In a form that you think potentially doesn't scrub its input, you can type in a set of chaining `../` and `/etc/shadow` to try and get the server to respond with a list of password hashes. You could try and crash our own Onshape App if you'd like (good luck)! For example, an attempt could be `../../../../../../etc/shadow`. If you don't have a form, you can still query the server with a well-crafted [URI](https://en.wikipedia.org/wiki/URI_scheme). Example: `http://example.com/../../../../../../etc/shadow` or `http://target/..%u2216..%u2216directory/file` to get through servers that scrub Unicode encoded characters. Remember, ethical hacking is ok, but doing this stuff on real websites is illegal. However, you can always message the site and tell them that you're a security expert and successfuly found the list of credit cards they're improperly storing in order to recieve a nice payout. I'd recommend not doing that unless you know what you're doing. Instead, test your hacker skills by spinning up your own server! 
 
 - **`mv`**: Move or rename a file. Example: `mv file-that-should-be-somewhere-else.txt ../here` will move the file up one directory to a folder named `here`
     * **`-v`**: Verbose output, basically has `mv` explain what's being done. Useful for debugging a faulty `mv` command 
-    * **`-f`**: Allows you to move force move source files to a destination folder. Basically forces the move without a prompt asking if it's ok to overwrite files with the same names. Useful when you know the contents inside a folder are useless.
+    * **`-f`**: Allows you to forcefully move source files to a destination folder. Basically forces the move without a prompt asking if it's ok to overwrite files with the same names. Useful when you know the contents inside a folder are useless.
 
     Examples: `mv file1.txt my-api-keys 5G_corona_build.pkg backdoor-to-nsa.sh file5.tsx ~/Documents` moves all files to the Documents folder (the `~` is a shortcut for your home directory).
 
@@ -58,6 +60,27 @@ Below is a list of commands and respective flags that you should have in your to
     * **`-f`**: Forcibly remove contents, without prompting for user permission. A common tactic to make new enemies is to go over to an unsuspecting person and type `rm -rf *` into their Terminal to promptly delete everything (More on * functionality later). If you're smart, you will use `chmod` to remove execute permissions of the folder.
 
 - **`chmod`**: Change permission of a file or directory. More information on usage in [Permissions](#permissions)
+
+- **`sudo`**: Your go to root command. If you need elevated permission to view, execute, or read files, precede a command with `sudo`. You will be prompted to type in your password. Example: `sudo mv restricted-file restricted-directory` will move a restricted file to a restricted directory. If you need to switch to root, type in `sudo su` (don't forget to switch back out by running the same command). 
+
+- **`cat`**: Print out a file's contents. Example: `cat main.py` will output your genius code to the terminal. If you want to redirect the output to a new file, try `cat main.py > new_file.txt` or append with `cat main.py >> logs`. 
+
+- **`diff`**: Find the differences of two files. Example `diff text1.txt text2.txt` will print out all of the lines that are different. Useful when you're writing tests (with correct answers) and checking your script output to see if your code is correct. 
+
+- **`zip`, `unzip`, `gunzip`, `tar`**: Zipping and unzipping files the Terminal way. More info in [Compression](#compression)
+
+- **`curl`**: Your very own postman! Query stuff online. Useful tips [here](https://curl.haxx.se/docs/manual.html). Example: `curl http://wttr.in/LOCATION` to find out the weather in LOCATION (Try `curl http://wttr.in/Boston`). You can flex on Chris Rogers by crafting a SystemLink POST call with curl (I won't give you the answer, this one's on you). 
+    * **`-h` or `--header`**: Craft your own API header. Example: `curl --header 'content-type: application/json'` 
+    * **`--request`**: Specify the request method. Example: `curl --request GET --url http://blah-blah.com`
+    * **`--url`**: The url you want to send a cURL to. 
+    * **`-s`**: silent mode.
+    * **`-S`**: Show errors. 
+    Example: `curl -sS "https://en.wikipedia.org/wiki/List_of_Olympic_medalists_in_judo?action=raw"` allows you to view the list of olympic medalists in judo. 
+
+If you don't believe the powers of cURL, I've taken the freedom to try out some of the commands for you. Here's the output: 
+
+![weather](./images/weather.png) ![moon](./images/moon.png) ![judo](./images/judo.png)
+
 
 
 
@@ -87,3 +110,5 @@ Below is a list of commands and respective flags that you should have in your to
 
 
 Psst... jealous of my decked out terminal? Go ahead and download https://ohmyz.sh/ to get your outdated terminal a snazzy new look.
+
+If you always use multiple terminals and need a better way of managing them, try out tmux! `brew install tmux` if you dare. 
