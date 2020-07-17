@@ -242,7 +242,7 @@ This section will pose some problems for you to solve. If you're stuck, check ou
 7. What command(s) do I run in order to unzip a .gz file? 
 
 
-At the end of this session, please submit your anonymous answers to this google form: 
+At the end of this session, please submit your anonymous answers to this google form: https://forms.gle/bUybNV93oW2qhBtq5
 
 ## Challenges
 
