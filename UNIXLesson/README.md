@@ -77,7 +77,11 @@ Below is a list of commands and respective flags that you should have in your to
     * **`-S`**: Show errors. 
     Example: `curl -sS "https://en.wikipedia.org/wiki/List_of_Olympic_medalists_in_judo?action=raw"` allows you to view the list of olympic medalists in judo. Check the bottom of the cheat sheet to see the output of several cURL commands. 
 
-- **`touch`**: Create a file! Example: `touch this-is-so-cool.png` to create an empty .png file. You can even specify the path to create a file. 
+- **`touch`**: Create a file! Example: `touch this-is-so-cool.png` to create an empty .png file. You can even specify the path to create a file.
+
+- **`echo`**: Print the following string to the terminal. Example: `echo "wow"` will output wow to the terminal. You can use `>`, `>>`, and `|` operators to pipe the echo output to another script. 
+
+- **`which`**: Outputs a path to your executable. Example: `which python3` will display the location of the executable `python3`. 
 
 - **`nano` or `emacs` or `vim`**: Text editors in the Terminal! Each one has their own niche, so choose wisely. I personally love `vim`, so if you have any questions and want to learn more, feel free to AMA. Typing in `nano file.txt` or `emacs file.txt` or `vim file.txt` will open up the file in the respective text editor. If you don't have any of these, try `brew install` for OS X or `sudo apt-get install` if you're a Linux user. 
 
@@ -87,25 +91,49 @@ If you don't believe in the powers of cURL, I've taken the freedom to try out so
 
 ## Your First Shell Script
 
-Let's write your first shell script together! Every `sh` script starts off with a [shebang](https://en.wikipedia.org/wiki/Shebang_(Unix)\) 
+Let's write your first shell script together! Every `sh` script starts off with a [shebang](https://en.wikipedia.org/wiki/Shebang_(Unix)), followed by a path to an executable that looks like this: `#!/usr/bin/sh` or `#!/bin/sh`. If you don't know where `sh` is in your machine, type `which sh` and it will output a path for you. The shebang is actually the `#!` that signals to the program loader that the following file is indeed an executable and it should find the executable path to run the script (which is `/bin/sh` for my machine). Once you have `#!/bin/sh` (or your own path) written as the first line, it's time to write some code! I'll outline how to use conditionals, for loops, querying for arguments, and other useful information below, and have some examples lined up at the [top](https://github.com/drybell/CEEO2020/tree/master/UNIXLesson) of this page. You can run shell scripts in two ways: `sh first-script.sh` or `./first-script.sh`. The second method only works if you `chmod` the executable and raise permissions to run, so let's stick with the first method and learn about permissions later. 
+
+1. Creating Variables
+2. Printing
+3. Conditionals
+4. For/While loops
+5. Command Line Arguments
 
 
 ## Permissions
+
+If you remember in the previous section, trying to run `./first-script.sh` causes the terminal to bark back: `permission denied`. In this section, you'll learn how permissions work in a UNIX machine and how to modify them. Finishing this section will allow you to solve the first problem in [Test Your Knowledge](#test-your-knowledge). Take a look at the terminal output below:
+
+![denied](./images/denied.png)
+
+As you can see, running the `./` method returns `permission denied`. Typing in `ls -la` allows me to see that `first-script.sh` has permissions `-rw-r--r--`. What does this 
 
 ## Compression
 
 ## Test Your Knowledge
 
+This section will pose some problems for you to solve. If you're stuck, check out [cheat sheet](#cheat-sheet), [permissions](#permissions), or [compression](#compression) as these problems are directly tied to the previous sections.
+
+1. What is the necessary `chmod` command needed to execute `first-script.sh` like so: `./first-script.sh`. What does the permission look like? 
+
+2. What is the command to print "Hello World" to the terminal? 
+
+3. What is the shebang? 
+
+4. 
+
+
+At the end of this session, please submit your anonymous answers to this google form: 
 
 ## Challenges
 
-1. Learn about `crontab` and `cron` [here](https://www.ostechnix.com/a-beginners-guide-to-cron-jobs/). Make a shell script that curls the weather in Abu Dhabi and outputs to a file named `weather-in-abu-dhabi` every 5 minutes. Try and append future output to the same file (and not overwriting the previous output). If you don't want this to run forever, you can use `crontab -e` in order to modify the list of running cronjobs. Deleting a line will allow you to remove the task from running ever again. 
+1. Learn about `crontab` and `cron` [here](https://www.ostechnix.com/a-beginners-guide-to-cron-jobs/). Make a shell script that curls the weather in Abu Dhabi and outputs to a file named `weather-in-abu-dhabi` every 5 minutes. Try and append future output to the same file (and not overwriting the previous output). If you don't want this to run forever, you can use `crontab -e` in order to modify the list of running cronjobs. Deleting a line will allow you to remove the task from running ever again. Another direction for this script could involve asking for the weather in any location and the script will output the answer for you. Some example usage could look like this: `./whatstheweatherin Boston` 
 
 2. Make a shell script that organizes your Desktop! Figure out the necessary folders and the naming conventions that you want. For myself, I usually take a lot of screenshots and have them cluttered all over the Desktop. To fix this, I wrote a script and made it a cronjob to always move screen shots to a specified folder. 
 
 3. There's a command called `date` which prints out boring date and time. Write an upgraded `date` called `upgraded-date.sh` that allows you to see the time in multiple date-time formats, your current time zone, day of the week, etc. 
 
-4. Write a script to unzip files from a source folder and send the unzipped folder to a specified location. Example usage: `./my_unzipper Downloads/text.tar.gz CEEO2020/downloads`
+4. Write a script to unzip files from a source folder and send the unzipped folder to a specified location. Example usage: `./my_unzipper Downloads/text.tar.gz CEEO2020/downloads`.
 Allow multiple zip types for a more robust unzipper. 
 
 ## Extra Resources and Further Hacking
@@ -113,17 +141,5 @@ Allow multiple zip types for a more robust unzipper.
 I love finding new tools to `brew install`, and have compiled a list of fun scripts for you to try out on your own. 
 - `tree` allows you to visualize your current working directory and all of its subfolders in a nice ASCII art fashion. 
 - `weechat` allows you to join IRC channels. Chat away with other developers in your Terminal! Who needs slack or discord. 
-- 
-
-
-
-
-
-
-
-
-
-
-Psst... jealous of my decked out terminal? Go ahead and download https://ohmyz.sh/ to get your outdated terminal a snazzy new look.
-
-If you always use multiple terminals and need a better way of managing them, try out tmux! `brew install tmux` if you dare. 
+- Psst... jealous of my decked out terminal? Go ahead and download https://ohmyz.sh/ to get your outdated terminal a snazzy new look.
+- If you always use multiple terminals and need a better way of managing them, try out tmux! `brew install tmux` if you dare. 
