@@ -1,0 +1,227 @@
+
+"type": 134,
+"typeName": "BTMFeature",
+"featureType": "extrude",
+"name": "Extrude 1",
+"parameters": [
+
+"type": 145,
+"typeName": "BTMParameterEnum",
+"enumName": "OperationDomain",
+"value": "MODEL",
+"parameterId": "domain",
+
+"type": 145,
+"typeName": "BTMParameterEnum",
+"enumName": "ToolBodyType",
+"value": "SOLID",
+"parameterId": "bodyType",
+
+"type": 145,
+"typeName": "BTMParameterEnum",
+"enumName": "NewBodyOperationType",
+"value": "REMOVE",
+"parameterId": "operationType",
+
+"type": 145,
+"typeName": "BTMParameterEnum",
+"enumName": "NewSurfaceOperationType",
+"value": "NEW",
+"parameterId": "surfaceOperationType",
+
+"type": 145,
+"typeName": "BTMParameterEnum",
+"enumName": "FlatOperationType",
+"value": "REMOVE",
+"parameterId": "flatOperationType",
+
+"type": 148,
+"typeName": "BTMParameterQueryList",
+"queries": [
+
+"type": 138,
+"typeName": "BTMIndividualQuery",
+"geometryIds": [
+"JJC"
+
+
+"parameterId": "entities",
+
+"type": 148,
+"typeName": "BTMParameterQueryList",
+"queries":
+"parameterId": "surfaceEntities",
+
+"type": 145,
+"typeName": "BTMParameterEnum",
+"enumName": "BoundingType",
+"value": "BLIND",
+"parameterId": "endBound",
+
+"type": 144,
+"typeName": "BTMParameterBoolean",
+"value": false,
+"parameterId": "oppositeDirection",
+
+"type": 147,
+"typeName": "BTMParameterQuantity",
+"units": "",
+"value": 0.0,
+"expression": "1 in",
+"isInteger": false,
+"parameterId": "depth",
+
+"type": 148,
+"typeName": "BTMParameterQueryList",
+"queries":
+"parameterId": "endBoundEntityFace",
+
+"type": 148,
+"typeName": "BTMParameterQueryList",
+"queries":
+"parameterId": "endBoundEntityBody",
+
+"type": 148,
+"typeName": "BTMParameterQueryList",
+"queries":
+"parameterId": "endBoundEntityVertex",
+
+"type": 144,
+"typeName": "BTMParameterBoolean",
+"value": false,
+"parameterId": "hasOffset",
+
+"type": 147,
+"typeName": "BTMParameterQuantity",
+"units": "",
+"value": 0.0,
+"expression": "1 in",
+"isInteger": false,
+"parameterId": "offsetDistance",
+
+"type": 144,
+"typeName": "BTMParameterBoolean",
+"value": false,
+"parameterId": "offsetOppositeDirection",
+
+"type": 144,
+"typeName": "BTMParameterBoolean",
+"value": false,
+"parameterId": "hasDraft",
+
+"type": 147,
+"typeName": "BTMParameterQuantity",
+"units": "",
+"value": 0.0,
+"expression": "3 deg",
+"isInteger": false,
+"parameterId": "draftAngle",
+
+"type": 144,
+"typeName": "BTMParameterBoolean",
+"value": false,
+"parameterId": "draftPullDirection",
+
+"type": 144,
+"typeName": "BTMParameterBoolean",
+"value": false,
+"parameterId": "hasSecondDirection",
+
+"type": 145,
+"typeName": "BTMParameterEnum",
+"enumName": "SecondDirectionBoundingType",
+"value": "BLIND",
+"parameterId": "secondDirectionBound",
+
+"type": 144,
+"typeName": "BTMParameterBoolean",
+"value": true,
+"parameterId": "secondDirectionOppositeDirection",
+
+"type": 147,
+"typeName": "BTMParameterQuantity",
+"units": "",
+"value": 0.0,
+"expression": "1 in",
+"isInteger": false,
+"parameterId": "secondDirectionDepth",
+
+"type": 148,
+"typeName": "BTMParameterQueryList",
+"queries":
+"parameterId": "secondDirectionBoundEntityFace",
+
+"type": 148,
+"typeName": "BTMParameterQueryList",
+"queries":
+"parameterId": "secondDirectionBoundEntityBody",
+
+"type": 148,
+"typeName": "BTMParameterQueryList",
+"queries":
+"parameterId": "secondDirectionBoundEntityVertex",
+
+"type": 144,
+"typeName": "BTMParameterBoolean",
+"value": false,
+"parameterId": "hasSecondDirectionOffset",
+
+"type": 147,
+"typeName": "BTMParameterQuantity",
+"units": "",
+"value": 0.0,
+"expression": "1 in",
+"isInteger": false,
+"parameterId": "secondDirectionOffsetDistance",
+
+"type": 144,
+"typeName": "BTMParameterBoolean",
+"value": false,
+"parameterId": "secondDirectionOffsetOppositeDirection",
+
+"type": 144,
+"typeName": "BTMParameterBoolean",
+"value": false,
+"parameterId": "hasSecondDirectionDraft",
+
+"type": 147,
+"typeName": "BTMParameterQuantity",
+"units": "",
+"value": 0.0,
+"expression": "3 deg",
+"isInteger": false,
+"parameterId": "secondDirectionDraftAngle",
+
+"type": 144,
+"typeName": "BTMParameterBoolean",
+"value": false,
+"parameterId": "secondDirectionDraftPullDirection",
+
+"type": 144,
+"typeName": "BTMParameterBoolean",
+"value": false,
+"parameterId": "defaultScope",
+
+"type": 148,
+"typeName": "BTMParameterQueryList",
+"queries": [
+
+"type": 138,
+"typeName": "BTMIndividualQuery",
+"geometryIds": [
+"JHD"
+"parameterId": "booleanScope",
+
+"type": 144,
+"typeName": "BTMParameterBoolean",
+"value": true,
+"parameterId": "defaultSurfaceScope",
+
+"type": 148,
+"typeName": "BTMParameterQueryList",
+"queries":
+"parameterId": "booleanSurfaceScope",
+
+"returnAfterSubfeatures": false,
+"suppressionState": 
+"type": 0

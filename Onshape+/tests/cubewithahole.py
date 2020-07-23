@@ -268,7 +268,7 @@ def test_create_surface(client, part_studio):
 def extrude_remove_circle(client, part_studio):
     # square(client,part_studio)
     tool_body_type = BTMParameterEnum145(
-        value="SURFACE", enum_name="ToolBodyType", parameter_id="bodyType"
+        value="SOLID", enum_name="ToolBodyType", parameter_id="bodyType"
     )
     operation_domain = BTMParameterEnum145(
         value="MODEL",
@@ -302,8 +302,20 @@ def extrude_remove_circle(client, part_studio):
     )
 
     line_query = BTMParameterQueryList148(
-        parameter_id="surfaceEntities",
+        parameter_id="entities",
         queries=[BTMIndividualQuery138(deterministic_ids=["JJC"])],
+    )
+    query = BTMParameterQueryList148(
+        parameter_id="surfaceEntities",
+        queries=[],
+    )
+    other_query = BTMParameterQueryList148(
+        parameter_id="booleanScope",
+        queries=[BTMIndividualQuery138(deterministic_ids=["JHD"])],
+    )
+    scope = BTMParameterQueryList148(
+        parameter_id="booleanSurfaceScope",
+        queries=[],
     )
     query2 = BTMParameterQueryList148(
         parameter_id="endBoundEntityFace",
@@ -318,16 +330,16 @@ def extrude_remove_circle(client, part_studio):
         queries=[],
     )
     
-    length = BTMParameterQuantity147(expression="1*in", parameter_id="depth")
+    length = BTMParameterQuantity147(expression="1 in", parameter_id="depth")
     offset = BTMParameterQuantity147(expression="1 in", parameter_id="offsetDistance")
     ffset = BTMParameterQuantity147(expression="1 in", parameter_id="secondDirectionDepth")
     extrude_feature = BTMFeature134(
         bt_type="BTMFeature-134",
         name="Extrude Remove Circle",
         feature_type="extrude",
-        parameters=[tool_body_type, operation_domain, 
-        			blind, boundingtype, query2, query3, query4,
-        			toolbodytype, operationtype, flat, line_query, length, offset],
+        parameters=[operation_domain, tool_body_type, toolbodytype, 
+        			boundingtype, other_query, scope, offset, ffset, query,
+        			operationtype, flat, line_query, length],
     )
     feature_definition = BTFeatureDefinitionCall1406(feature=extrude_feature)
     client.part_studios_api.add_part_studio_feature(
@@ -358,11 +370,17 @@ def test_create_circle(client, part_studio):
         _preload_content=False,
     )
 
+# headers = {'Content-Type': 'application/json', 'Accept': 'application/vnd.onshape.v1+json'}
+# r = client.api_client.request(method='GET', url = base_url + '/api/partstudios/d/b7c65d78bde731408815188e/w/09daa8ec5418b4d1e583d4b3/e/fbca3f5c681a7618c9d7d895/features', query_params = {}, headers = headers)
+# print(json.dumps(json.loads(r.data), indent=4))
 
-# create_square(client, element)
-# test_create_surface(client, element)
-# test_create_circle(client, element)
+
+input('Press Enter To Create a Square Sketch: ')
+create_square(client, element)
+input('Press Enter to Add Extrude: ')
+test_create_surface(client, element)
+input('Press Enter to Add a Circle to the Face of the Square: ')
+test_create_circle(client, element)
+input('Press Enter to Extrude Remove: ')
 extrude_remove_circle(client, element)
-
-
 print('Done')
