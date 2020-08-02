@@ -46,6 +46,7 @@ element = OnshapeElement(
 #     )
 # print(result)
 
+
 def create_square(client, part_studio):
     FEATURE_NAME = "Square"
     PLANE_ID = "JDC"  # The plane deterministic ID for the sketch
@@ -71,7 +72,7 @@ def create_square(client, part_studio):
         value='point4', parameter_id="localFirst", bt_type="BTMParameterString-149"
     )
     line_end_string_param = BTMParameterString149(
-        value=f"'LINE1.start",
+        value=f"LINE1.start",
         parameter_id="localSecond",
         bt_type="BTMParameterString-149",
     )

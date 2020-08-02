@@ -24,8 +24,9 @@ sweep_cube = 'https://rogers.onshape.com/documents/aec16876714d70a447e5b140/w/c9
 normal = 'b7c65d78bde731408815188e/w/09daa8ec5418b4d1e583d4b3/e/fbca3f5c681a7618c9d7d895'
 
 headers = {'Content-Type': 'application/json', 'Accept': 'application/vnd.onshape.v1+json'}
-r = client.api_client.request(method='GET', url = base_url + '/api/partstudios/d/b7c65d78bde731408815188e/w/09daa8ec5418b4d1e583d4b3/e/fbca3f5c681a7618c9d7d895/features', query_params = {}, headers = headers)
+r = client.api_client.request(method='GET', url = base_url + '/api/partstudios/d/aec16876714d70a447e5b140/w/c96b1b15861efbe1cf7dd9be/e/5f5788dd8bef0635f2776ac5/features', query_params = {}, headers = headers)
 # print(json.dumps(json.loads(r.data), indent=4))
+# exit()
 
 
 # Parse the feature tree by looking at known keywords and removing unwanted params
@@ -87,14 +88,6 @@ for i,item in enumerate(features_list):
 
 # for each part, create a function that can repopulate the feature tree 
 
-# SKETCH CURVE SEGMENT 155
-# start_point_id=f"LINE1.start",
-# end_point_id=f"LINE1.end",
-# start_param=0.0,
-# end_param=1.0,
-# geometry=line_geometry1,
-# entity_id='LINE1',
-# bt_type="BTMSketchCurveSegment-155",
 all_functions = {}
 
 sketch_curve_segment_trans = {'startPointId': 'start_point_id',
@@ -119,45 +112,29 @@ circle_sketch_trans = {'radius': 'radius', 'xCenter': 'x_center', 'yCenter': 'y_
 
 sketch_curve_trans = {'centerId': 'center_id', 'entityId': 'entity_id'}
 
-    # circle = BTMSketchCurve4(center_id=f"{CIRCLE_ID}.center", entity_id=CIRCLE_ID, geometry=circle_geometry)
-# circle_geometry = BTCurveGeometryCircle115(radius=0.00635, xcenter=0.0127, ycenter=0.0127, xdir=.0127, ydir=0.0, clockwise=False)
-# operation_domain = BTMParameterEnum145(
-#     value="MODEL",
-#     enum_name="OperationDomain",
-#     parameter_id="domain",
-# ) 
-# length = BTMParameterQuantity147(expression="1*in", parameter_id="length")
-# line_geometry4 = BTCurveGeometryLine117(
-#         pnt_x=.0254, pnt_y=0.0, dir_x=-.0254, dir_y=0.0, bt_type="BTCurveGeometryLine-117"
-# )
+# "type": 148,
+#                         "typeName": "BTMParameterQueryList",
+#                         "message": {
+#                             "queries": [
+#                                 {
+#                                     "type": 140,
+#                                     "typeName": "BTMIndividualSketchRegionQuery",
+#                                     "message": {
+#                                         "featureId": "FCkTDdyln1fYiB7_0",
+#                                         "filterInnerLoops": true,
+#                                         "geometryIds": [
+#                                             "JGC"
+#                                         ],
+#                                         "hasUserCode": false,
+#                                         "nodeId": "MwnLOdHIPBGaQURJw"
+#                                     }
+#                                 }
+#                             ],
+#                             "parameterId": "entities",
+#                             "hasUserCode": false,
+#                             "nodeId": "Mxw/hGr+mFyyluxI"
 
-# point_string_param3 = BTMParameterString149(
-#         value='point3', parameter_id="localFirst", bt_type="BTMParameterString-149"
-#     )
-
-
-# coincident_constraint1 = BTMSketchConstraint2(
-#         constraint_type="COINCIDENT",
-#         parameters=[point_string_param, line_end_string_param],
-#         entity_id="constrainId",
-#         bt_type="BTMSketchConstraint-2",
-#     )
-# line_end_string_param = BTMParameterString149(
-#         value=f"'LINE1.start",
-#         parameter_id="localSecond",
-#         bt_type="BTMParameterString-149",
-#     )
-
-# feature_definition = BTFeatureDefinitionCall1406(feature=sketch)
-#     client.part_studios_api.add_part_studio_feature(
-#         did=part_studio.did,
-#         wvm=part_studio.wvm,
-#         wvmid=part_studio.wvmid,
-#         eid=part_studio.eid,
-#         bt_feature_definition_call_1406=feature_definition,
-#         _preload_content=False,
-#     )
-
+# TODO: SKETCHREGIONQUERY
 
 # abstract these for loops into functions for ease of use, figure out the parameters 
 
@@ -241,6 +218,24 @@ for item in features:
 									except KeyError:
 										continue
 									temp.update({translated_param: param['message'][i]})
+							elif 'BTMParameterEnum' in bt_type: 
+								for i in param['message']: 
+									try: 
+										translated_param = param_enum_trans[i]
+									except KeyError: 
+										continue
+									temp.update({translated_param: param['message'][i]})
+							elif 'QueryList' in bt_type:
+								queries = param['message']['queries']
+								temp_array = []
+								for query in queries:
+									query_bt_type = '%s%s' % (query['typeName'], query['type'])
+									if 'IndividualQuery' in query_bt_type:
+										deterministic_ids = query['message']['geometryIds']
+										parameter_id = param['message']['parameterId']
+										temp_array.append({'deterministic_ids': deterministic_ids, 'parameter_id': parameter_id, 'bt_type': query_bt_type})
+								temp.update({'BTMParameterQueryList148': temp_array})
+
 							temp.update({'bt_type': bt_type})
 							temp_query.append(temp)
 						func_temp.update({'constraints': temp_query})
@@ -324,64 +319,157 @@ for item in features:
 		all_functions.update({item: {'feature_type': feature_type, 'name': name, 'parameters': params_list, 'bt_type': 'BTMFeature-134'} })
 
 
-print(json.dumps(all_functions,indent=4))
-# sketch = BTMSketch151(
-#     entities=[line, line2, line3, line4],
-#     name="Square",
-#     parameters=[plane_query, length],
-#     constraints=[coincident_constraint1, coincident_constraint2],
-#     bt_type="BTMSketch-151",
-# )
-# length = BTMParameterQuantity147(expression="1*in", parameter_id="length")
-# line_geometry4 = BTCurveGeometryLine117(
-#         pnt_x=.0254, pnt_y=0.0, dir_x=-.0254, dir_y=0.0, bt_type="BTCurveGeometryLine-117"
-# )
-# coincident_constraint1 = BTMSketchConstraint2(
-#         constraint_type="COINCIDENT",
-#         parameters=[point_string_param, line_end_string_param],
-#         entity_id="constrainId",
-#         bt_type="BTMSketchConstraint-2",
-#     )
-# line_end_string_param = BTMParameterString149(
-#         value=f"'LINE1.start",
-#         parameter_id="localSecond",
-#         bt_type="BTMParameterString-149",
-#     )
-# line = BTMSketchCurveSegment155(
-#     start_point_id=f"LINE1.start",
-#     end_point_id=f"LINE1.end",
-#     start_param=0.0,
-#     end_param=1.0,
-#     geometry=line_geometry1,
-#     entity_id='LINE1',
-#     bt_type="BTMSketchCurveSegment-155",
-# )
+print(json.dumps(all_functions, indent=4))
+
+def fixString(temp_consts):
+	fixed_params = '['
+	for item in temp_consts:
+		fixed_params += item + ','
+	fixed_params += ']'
+	return fixed_params
+
 print('\nThe following functions will be created:\n')
 for func in all_functions:
 	func_dict = all_functions[func] 
-	name = func_dict['name'].replace(' ', '_') + str(func)
-	print('\t' + name)
+	func_name = func_dict['name'].replace(' ', '_') + str(func)
+	print('\t' + func_name)
 	if func_dict['bt_type'] == 'BTMSketch151': 
 		# create entities
 		entities = func_dict['entities']
 		entities_funcs = []
-
+		constraints = func_dict['constraints']
+		sketch_name = func_dict['name']
+		parameters = func_dict['parameters']
+		param_funcs = []
+		constraints_funcs = []
 		for ent in entities: 
 			if ent['bt_type'] == 'BTMSketchCurveSegment-155':
-				func_string = "BTMSketchCurveSegment155(start_point=%s, end-point_id=%s, start_param=%s, end_param=%s, geometry=%s, entity_id=%s, bt_type=%s" % ()
-				
+				# check geometry 
+				geom =''
+				if 'CurveGeometryLine' in ent['geometry']['bt_type']:
+					pnts = [ent['geometry'][i] for i in ent['geometry']]
+					geom = 'BTCurveGeometryLine117(pnt_x=%s, pnt_y=%s, dir_x=%s, dir_y=%s, bt_type=\"%s\")' % (pnts[0], pnts[1], pnts[2], pnts[3], pnts[4])
 
+				line = [ent[i] for i in ent]
+				func_string = "BTMSketchCurveSegment155(start_point_id=\"%s\", end_point_id=\"%s\", start_param=%s, end_param=%s, geometry=%s, entity_id=\"%s\", bt_type=\"%s\")" % (line[0], line[1], line[2], line[3], geom, line[5], line[6])
+				
+				entities_funcs.append(func_string)
 
 			elif ent['bt_type'] == 'BTCurveGeometryCircle115':
+				# read geometry, ids, and bt_type 
+				geometry = ent['geometry']
+				ids = ent['ids']
 
-	elif fun_dict['bt_type'] == 'BTMFeature-134'
-		
+				id_values = [ids[i] for i in ids]
+				geo_values = [geometry[i] for i in geometry]
+				geometry_string = 'BTCurveGeometryCircle115(radius=%s, xcenter=%s, ycenter=%s, xdir=%s, ydir=%s, clockwise=%s)' % (geo_values[0], geo_values[1], geo_values[2], geo_values[3], geo_values[4], str(geo_values[5]).capitalize())
+				circle_string = 'BTMSketchCurve4(center_id=\"%s\", entity_id=\"%s\", geometry=%s)' % (id_values[0], id_values[1], geometry_string)
+
+				entities_funcs.append(circle_string)
+
+		for const in constraints:
+			constraint_type = const['constraint_type']
+			entity_id = const['entity_id']
+			bt_type = const['bt_type']
+			temp_consts = []
+			for c in const['constraints']:
+				if 'QueryList' in c['bt_type']:
+					deterministic_ids = c['BTMParameterQueryList148'][0]['deterministic_ids']
+					parameter_id = c['BTMParameterQueryList148'][0]['parameter_id']
+					bt_type = c['BTMParameterQueryList148'][0]['bt_type']
+					param_string = 'BTMParameterQueryList148(parameter_id=\"%s\", queries=[%s(deterministic_ids=%s)])' % (parameter_id, bt_type, deterministic_ids)
+				else: 
+					bt_type_removed_under = c['bt_type'].replace('-', '')
+					cs_values = [c[i] for i in c]
+					cs_keys = [i for i in c]
+					param_string = "%s(%s=\"%s\", %s=\"%s\", %s=\"%s\")" % (bt_type_removed_under, cs_keys[0], cs_values[0], cs_keys[1], cs_values[1],cs_keys[2], cs_values[2])
+					#bt_type(key=value, key=value, ...)
+					temp_consts.append(param_string)
+
+			fixed_params = fixString(temp_consts)
+
+			func_string = "BTMSketchConstraint2(constraint_type=\"%s\",parameters=%s,entity_id=\"%s\",bt_type=\"%s\")" % (constraint_type, fixed_params, entity_id, bt_type)
+			constraints_funcs.append(func_string)
+
+		for param in parameters: 
+			# key is function name 
+			for key in param:
+				bt_type_removed_under = key.replace('-', '')
+				if 'QueryList' in bt_type_removed_under: 
+					deterministic_ids = param[key][0]['deterministic_ids']
+					parameter_id = param[key][0]['parameter_id']
+					bt_type = param[key][0]['bt_type']
+					param_string = 'BTMParameterQueryList148(parameter_id=\"%s\", queries=[%s(deterministic_ids=%s)])' % (parameter_id, bt_type, deterministic_ids)
+				else: 
+					keys = [i for i in param[key]]
+					values = [param[key][i] for i in param[key]]
+					param_string = "%s(%s=\"%s\", %s=\"%s\", bt_type=\"%s\")" % (bt_type_removed_under, keys[0], values[0], keys[1], values[1], key)
+
+				param_funcs.append(param_string)
+
+		fixed_entities = fixString(entities_funcs)
+		fixed_constraints = fixString(constraints_funcs)
+		fixed_params = fixString(param_funcs)
+
+		# create btmsketch151
+		final_string = 'BTMSketch151(entities=%s, name=\"%s\", parameters=%s, constraints=%s, bt_type=\"BTMSketch-151\")' % (fixed_entities, sketch_name, fixed_params, fixed_constraints)
+
+		# print(sketch_string)
+
+	elif func_dict['bt_type'] == 'BTMFeature-134':
+		feature_type = func_dict['feature_type']
+		name = func_dict['name']
+		parameters = func_dict['parameters']
+		param_funcs = []
+		for param in parameters:
+			key = next(iter(param))
+			bt_type_removed_under = key.replace('-', '')
+			if 'QueryList' in key: 
+				parameter_id = param[key][0]['parameter_id']
+				try: 
+					deterministic_ids = param[key][0]['deterministic_ids']
+					bt_type = param[key][0]['bt_type']
+					param_string = 'BTMParameterQueryList148(parameter_id=\"%s\", queries=[%s(deterministic_ids=%s)])' % (parameter_id, bt_type, deterministic_ids)
+				except KeyError: 
+					param_string = 'BTMParameterQueryList148(parameter_id=\"%s\", queries=[])' % (parameter_id)
+				
+			else: 
+				keys = [i for i in param[key]]
+				values = [param[key][i] for i in param[key]]
+				param_string = '%s(' % (bt_type_removed_under)
+				for i in range(len(keys)):
+					param_string += '%s=\"%s\",' % (keys[i], values[i])
+				param_string = param_string[:-1]
+				param_string += ')'
+
+			param_funcs.append(param_string)
+
+		fixed_params = fixString(param_funcs)
+		final_string = 'BTMFeature134(bt_type=\"%s\", name=\"%s\", feature_type=\"%s\", parameters=%s)' % ('BTMFeature-134', name, feature_type, fixed_params)
+
+		# print(feature_string)
+
+
+	with open('output3.py', 'a') as f: 
+		f.write(func_name + ' = ')
+		f.write(final_string + '\n\n')
 
 
 
 
 
 
+with open('output3.py', 'a') as f: 
+	f.write("""def funcTester(func_string, part_studio, client):
+	feature_definition = BTFeatureDefinitionCall1406(feature=func_string)
+	client.part_studios_api.add_part_studio_feature(
+	    did=part_studio.did,
+	    wvm=part_studio.wvm,
+	    wvmid=part_studio.wvmid,
+	    eid=part_studio.eid,
+	    bt_feature_definition_call_1406=feature_definition,
+	    _preload_content=False,
+	) """)
 
 
 # features --> message  --> entities
