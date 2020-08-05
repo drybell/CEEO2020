@@ -1,79 +1,76 @@
+import argparse 
 from onshape_client.client import Client 
+from onshape_client.oas import (
+    BTMParameterString149,
+    BTMSketch151,
+    BTMSketchConstraint2,
+    BTMSketchCurveSegment155,
+    BTMIndividualQuery138,
+    BTMParameterQueryList148,
+    BTMSketchPoint158,
+    BTCurveGeometryLine117,
+    BTMSketchCurve4,
+    BTCurveGeometryCircle115,
+    BTMIndividualSketchRegionQuery140,
+    BTMIndividualQueryBase139
+)
+import json
+from onshape_client.oas.models.bt_feature_definition_call1406 import (
+    BTFeatureDefinitionCall1406,
+)
 from onshape_client.onshape_url import OnshapeElement
-import json 
+from onshape_client.oas.models.bt_id_translation_params import BTIdTranslationParams
+from onshape_client.oas.models.btm_feature134 import BTMFeature134
+from onshape_client.oas.models.btm_parameter_enum145 import BTMParameterEnum145
+from onshape_client.oas.models.btm_parameter_quantity147 import BTMParameterQuantity147
+from onshape_client.client import Client 
+from onshape_client.oas import BTCopyDocumentParams, BTDocumentSearchParams
 
-# Also need a way to port this over to a node js server 
+parser = argparse.ArgumentParser(description='JSON Feature Tree to Python Translator')
+
+parser.add_argument('-u', dest="url", help="a valid URL for a Part Studio in Onshape")
+parser.add_argument('-o', dest="output", help="an output file to write to")
+parser.add_argument('-p', dest="api_path", help="path to your api key and secret file")
+parser.add_argument('-a', dest="output_url", help="an output url (part studio) to send the recreated part")
+
+
+args = parser.parse_args()
 
 
 key = ""
 secret = ""
 
-with open('../scripts/api-key', "r") as f: 
-	key = f.readline().rstrip()
-	secret = f.readline().rstrip()
+try:
+	with open(args.api_path, "r") as f: 
+		key = f.readline().rstrip()
+		secret = f.readline().rstrip()
+except Exception: 
+	print("-p flag not specified for api key path")
+	exit()
 
 base_url = 'https://rogers.onshape.com'
 
 client = Client(configuration={"base_url": base_url, "access_key": key, "secret_key": secret})
 
-element = OnshapeElement(
-        "https://rogers.onshape.com/documents/b7c65d78bde731408815188e/w/09daa8ec5418b4d1e583d4b3/e/fbca3f5c681a7618c9d7d895"
-    )
+element = OnshapeElement(args.url)
 
-sweep_cube = 'https://rogers.onshape.com/documents/aec16876714d70a447e5b140/w/c96b1b15861efbe1cf7dd9be/e/5f5788dd8bef0635f2776ac5'
-normal = 'b7c65d78bde731408815188e/w/09daa8ec5418b4d1e583d4b3/e/fbca3f5c681a7618c9d7d895'
+temp_url = args.url.split('/')
+did = temp_url[4]
+wid = temp_url[6]
+eid = temp_url[8]
+
+api_string = '/api/partstudios/d/did/w/wid/e/eid/features'
+api_call = api_string.replace('did', did).replace('wid', wid).replace('eid', eid)
 
 headers = {'Content-Type': 'application/json', 'Accept': 'application/vnd.onshape.v1+json'}
-r = client.api_client.request(method='GET', url = base_url + '/api/partstudios/d/aec16876714d70a447e5b140/w/c96b1b15861efbe1cf7dd9be/e/5f5788dd8bef0635f2776ac5/features', query_params = {}, headers = headers)
-# print(json.dumps(json.loads(r.data), indent=4))
-# exit()
+r = client.api_client.request(method='GET', url = base_url + api_call, query_params = {}, headers = headers)
 
-
-# Parse the feature tree by looking at known keywords and removing unwanted params
-
-whitelist = ['type', 'typeName', 'message', 'queries', 'parameterId', 'enumName', 'value',
-			 'units', 'expression', 'constraints', 'features', 'featureType', 'featureId', 'name']
-
-blacklist = ['hasUserCode', 'nodeId', 'namespace', 'suppressed']
-
-translation = {'parameterId': 'parameter_id', }
-# bt_type won't be hard 
-
-# initial_grab = json.dumps(json.loads(r.data), indent=4)
 initial_grab = json.loads(r.data)
-# print(json.dumps(r.data, indent=4))
-
-# Probably need just sketch data and feature data 
-
-output_file = 'demo.py'
-
 
 sketch_data = []
 feature_data = []
 misc_data = []
 features_list = initial_grab['features']
-# for item in features_list:     # for each feature in the list 
-# 	type_num = item['type']
-# 	typename = item['typeName']
-# 	print('%s%s' % (typename, type_num))     # grab typename and number
-# 	if typename == 'BTMSketch':
-# 		# dont forget the typename of the sketch 
-# 		entities = item['message']['entities']
-# 		for i in entities: 
-# 			type_num_ent = i['type']
-# 			typename_ent = i['typeName']
-# 			print(i)
-# 			print('%s%s' % (typename_ent, type_num_ent))
-# 			try: 
-# 				message = i['message']
-# 				if message['typeName'] == 'BTMSketchCurveSegment'
-
-
-# 			except: 
-
-
-
-# find all typenames, their types, and their messages 
 
 features = {}
 
@@ -85,11 +82,6 @@ for i,item in enumerate(features_list):
 	message['bt__type'] = btm_feature
 	features.update({i: message})
 
-# print(json.dumps(features, indent=4))
-
-# This grabs all the necessary features we need to recreate a part
-
-# for each part, create a function that can repopulate the feature tree 
 
 all_functions = {}
 
@@ -115,40 +107,11 @@ circle_sketch_trans = {'radius': 'radius', 'xCenter': 'x_center', 'yCenter': 'y_
 
 sketch_curve_trans = {'centerId': 'center_id', 'entityId': 'entity_id'}
 
-# "type": 148,
-#                         "typeName": "BTMParameterQueryList",
-#                         "message": {
-#                             "queries": [
-#                                 {
-#                                     "type": 140,
-#                                     "typeName": "BTMIndividualSketchRegionQuery",
-#                                     "message": {
-#                                         "featureId": "FCkTDdyln1fYiB7_0",
-#                                         "filterInnerLoops": true,
-#                                         "geometryIds": [
-#                                             "JGC"
-#                                         ],
-#                                         "hasUserCode": false,
-#                                         "nodeId": "MwnLOdHIPBGaQURJw"
-#                                     }
-#                                 }
-#                             ],
-#                             "parameterId": "entities",
-#                             "hasUserCode": false,
-#                             "nodeId": "Mxw/hGr+mFyyluxI"
-
-# TODO: SKETCHREGIONQUERY
-
-# abstract these for loops into functions for ease of use, figure out the parameters 
-
 for item in features:
 	functions = []
 	curr = features[item]
 
 	if curr['bt__type'] == 'BTMSketch151': 
-		# BTMSketchCurveSegment-155, BTCurveGeometryLine-117, BTMSketchConstraint-2,
-		# BTMParameterString-149, BTMParameterQueryList-148, BTMIndividualQuery-138,
-		# BTMParameterQuantity-147
 		entities = curr['entities']
 		constraints = curr['constraints']
 		featureType = curr['featureType']
@@ -322,7 +285,7 @@ for item in features:
 		all_functions.update({item: {'feature_type': feature_type, 'name': name, 'parameters': params_list, 'bt_type': 'BTMFeature-134'} })
 
 
-print(json.dumps(all_functions, indent=4))
+# print(json.dumps(all_functions, indent=4))
 
 def fixString(temp_consts):
 	fixed_params = '['
@@ -357,18 +320,19 @@ from onshape_client.oas.models.btm_parameter_enum145 import BTMParameterEnum145
 from onshape_client.oas.models.btm_parameter_quantity147 import BTMParameterQuantity147
 from onshape_client.client import Client 
 from onshape_client.oas import BTCopyDocumentParams, BTDocumentSearchParams
+from time import sleep
 """
 
-with open(output_file, 'a') as f: 
-		f.write(func_name + ' = ')
-		f.write(final_string + '\n\n')
+with open(args.output, 'a') as f: 
+	f.write(imports + "\n")
 
+func_names = []
 
-
-print('\nThe following functions will be created:\n')
+print('\nThe following functions have been created:\n')
 for func in all_functions:
 	func_dict = all_functions[func] 
 	func_name = func_dict['name'].replace(' ', '_') + str(func)
+	func_names.append(func_name)
 	print('\t' + func_name)
 	if func_dict['bt_type'] == 'BTMSketch151': 
 		# create entities
@@ -487,7 +451,7 @@ for func in all_functions:
 		# print(feature_string)
 
 
-	with open(output_file, 'a') as f: 
+	with open(args.output, 'a') as f: 
 		f.write(func_name + ' = ')
 		f.write(final_string + '\n\n')
 
@@ -516,57 +480,15 @@ with open('../scripts/api-key', "r") as f:
 base_url = 'https://rogers.onshape.com'
 
 client = Client(configuration={"base_url": base_url, "access_key": key, "secret_key": secret})
-"""
+element = OnshapeElement(\'%s\')
+""" % (args.output_url)
 
-with open(output_file, 'a') as f: 
-	f.write(func)
-	f.write()
-
-# features --> message  --> entities
-# 			   type
-# 			   typename --> 
-
-# features --> constraints
-
-# features and sketches come afterwards 
-
-# Hopefully we get a good enough dataset from just 3,4 examples of different functions
-# Onshape JSONs definitely have to have a pattern of creation. 
-
-# End Result: deserializing of OnShape PartStudio data (JSON) by feature element in the tree.
-# 			  Create a Python file filled with functions that can iterate and remake the 
-# 		      part piece by piece, and also describe metadata. 
-
-# Takes in different part studio URLS and parses the Part. 
-
-# Locate items based on the parent key
-
-# organize into client functions 
-
-# find parameters and fill variables with respective item_name
-
-# discover formats that work, formats that don't work, report back 
-
-# Try and formulate the necessary request to recreate the part for testing purposes 
-
-# 
-
-# parse through dictionary and categorize by listed terms, starting at parent 
-# for value in initial_grab.values():
-# 	if isinstance(value, list): 
-# 		# check size of dictionary
-# 		length_of_value_list = len(value)
-
-# 		# iterate through list and find dictionaries
-# 		for item in value: 
-# 			if isinstance(item, dict):
-
-
-
-
-# strip down more useless info and save data in onshape_client format 
-
-
-
-# organize data and output as python function 
+with open(args.output, 'a') as f: 
+	f.write(func + '\n')
+	f.write(api_key + '\n')
+	for i in range(len(func_names)):
+		f.write("print(\'Sending %s to Onshape...\')\n" % (func_names[i]))
+		f.write("funcTester(%s, element, client)\n" % (func_names[i]))
+		f.write("sleep(.75)\n")
+		f.write('\n')
 
