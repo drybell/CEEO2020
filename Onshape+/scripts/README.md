@@ -1,7 +1,7 @@
 # Onshape scripts
 
-### Note: output_python_files
-Contains feature tree JSONs and parsed JSONs that helped create the Feature Tree to Python translator
+### Note: 
+[output_python_files](https://github.com/drybell/CEEO2020/tree/master/Onshape%2B/scripts/output_python_files) contains feature tree JSONs and parsed JSONs that helped create the Feature Tree to Python translator
 
 ## Notable Scripts 
 * [feature_tree_parser.py](https://github.com/drybell/CEEO2020/blob/master/Onshape%2B/scripts/feature_tree_parser.py): My brute force algorithm that translates a JSON feature Tree to a working Python function that can resend the features to another part studio. Further work will allow the creation of a button for our app that autopopulates a feature for a user who is stuck on an activity. 
