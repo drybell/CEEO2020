@@ -26,6 +26,9 @@ from onshape_client.oas.models.btm_parameter_quantity147 import BTMParameterQuan
 from onshape_client.client import Client 
 from onshape_client.oas import BTCopyDocumentParams, BTDocumentSearchParams
 
+
+# Parse command line arguments
+# TODO: add error handling
 parser = argparse.ArgumentParser(description='JSON Feature Tree to Python Translator')
 
 parser.add_argument('-u', dest="url", help="a valid URL for a Part Studio in Onshape")
@@ -54,6 +57,7 @@ client = Client(configuration={"base_url": base_url, "access_key": key, "secret_
 
 element = OnshapeElement(args.url)
 
+# split the url to did, wid, eid
 temp_url = args.url.split('/')
 did = temp_url[4]
 wid = temp_url[6]
@@ -74,6 +78,7 @@ features_list = initial_grab['features']
 
 features = {}
 
+# Gather only the necessary info from the original feature tree JSON
 for i,item in enumerate(features_list):
 	type_num = item['type']
 	typename = item['typeName']
@@ -85,6 +90,8 @@ for i,item in enumerate(features_list):
 
 all_functions = {}
 
+
+# Translations to python API 
 sketch_curve_segment_trans = {'startPointId': 'start_point_id',
 							  'endPointId': 'end_point_id', 
 							  'startParam': 'start_param',
@@ -107,6 +114,8 @@ circle_sketch_trans = {'radius': 'radius', 'xCenter': 'x_center', 'yCenter': 'y_
 
 sketch_curve_trans = {'centerId': 'center_id', 'entityId': 'entity_id'}
 
+
+# Brute Force algo, pretty clunky and can be easily broken up to functions.
 for item in features:
 	functions = []
 	curr = features[item]
@@ -287,6 +296,7 @@ for item in features:
 
 # print(json.dumps(all_functions, indent=4))
 
+# fixing string representation 
 def fixString(temp_consts):
 	fixed_params = '['
 	for item in temp_consts:
@@ -328,6 +338,7 @@ with open(args.output, 'a') as f:
 
 func_names = []
 
+# create python functions
 print('\nThe following functions have been created:\n')
 for func in all_functions:
 	func_dict = all_functions[func] 
